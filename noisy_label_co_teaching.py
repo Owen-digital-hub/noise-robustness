@@ -9,7 +9,6 @@ def train_model(noise_rate=0.2, seed=42, method="coteaching", epochs=50):
     import random
     import os
 
-    # 完全复现性设置
     torch.manual_seed(seed)
     np.random.seed(seed)
     random.seed(seed)
@@ -18,7 +17,6 @@ def train_model(noise_rate=0.2, seed=42, method="coteaching", epochs=50):
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
-    # 超参配置
     num_classes     = 10
     batch_size      = 128
     initial_lr      = 0.1
@@ -30,8 +28,6 @@ def train_model(noise_rate=0.2, seed=42, method="coteaching", epochs=50):
     device          = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     num_workers     = min(2, os.cpu_count())
 
-    # 数据预处理与加载
-    
     transform = transforms.Compose([
         transforms.RandomCrop(32, padding=4),
         transforms.RandomHorizontalFlip(),
@@ -44,8 +40,7 @@ def train_model(noise_rate=0.2, seed=42, method="coteaching", epochs=50):
         root='./data', train=True, download=True, transform=transform)
     testset = torchvision.datasets.CIFAR10(
         root='./data', train=False, download=True, transform=transform)
-    
-    # 注入噪声标签
+
     noisy_labels = np.array(trainset.targets)
     n_noisy = int(noise_rate * len(noisy_labels))
     if n_noisy > 0:
@@ -60,8 +55,7 @@ def train_model(noise_rate=0.2, seed=42, method="coteaching", epochs=50):
         trainset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     testloader = torch.utils.data.DataLoader(
         testset, batch_size=100, shuffle=False, num_workers=num_workers)
-    
-    # 测试准确率函数
+
     def test_accuracy(net):
         net.eval()
         correct, total = 0, 0
@@ -74,8 +68,6 @@ def train_model(noise_rate=0.2, seed=42, method="coteaching", epochs=50):
                 total += labels.size(0)
         return 100. * correct / total
 
-    # 模型构造函数
-    
     def build_resnet():
         net = models.resnet18()
         net.fc = nn.Linear(net.fc.in_features, num_classes)
@@ -109,9 +101,7 @@ def train_model(noise_rate=0.2, seed=42, method="coteaching", epochs=50):
         acc = test_accuracy(net)
         print(f"[Baseline] Final Accuracy: {acc:.2f}%")
         return acc, epoch_loss
-
-    # Co-teaching
-
+        
     elif method == "coteaching":
         print(f"🔥 Co-teaching 开始训练 | 噪声率={noise_rate} | 种子={seed}")
         net1 = build_resnet()
