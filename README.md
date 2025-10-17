@@ -20,7 +20,14 @@ This project uses the CIFAR-10 image classification dataset. Due to GitHub's fil
 ```bash
 pip install -r requirements.txt
 
+
+
 ````
+Run experiments:
+```bash
+python run_experiments.py --noise_rate 0.2 --seed 123
+````
+
 ## Method Summary
 
 - **Co-teaching**: Two networks collaboratively select small-loss samples for training, reducing the impact of noisy labels.
