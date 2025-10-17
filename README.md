@@ -19,11 +19,9 @@ This project uses the CIFAR-10 image classification dataset. Due to GitHub's fil
 ### Install dependencies:
 ```bash
 pip install -r requirements.txt
-
-
-
 ````
-Run experiments:
+
+### Run experiments:
 ```bash
 python run_experiments.py --noise_rate 0.2 --seed 123
 ````
@@ -56,4 +54,3 @@ The table below shows the average test accuracy across 9 random seeds under vary
 | 0.65       | 65.17                 | 65.17                    | 65.17                |
 | 0.70       | 60.38                 | 58.03                    | 59.21                |
 
-Each row represents the average accuracy across 9 seeds for a given noise rate. Co-teaching consistently outperforms the baseline as noise levels increase.
